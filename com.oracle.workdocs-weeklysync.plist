@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  com.oracle.workdocs-weeklysync.plist
+  macOS launchd agent — runs 05-weekly-sync-and-monitor.sh every Sunday at midnight.
+
+  Install:
+    cp com.oracle.workdocs-weeklysync.plist ~/Library/LaunchAgents/
+    launchctl load ~/Library/LaunchAgents/com.oracle.workdocs-weeklysync.plist
+
+  Or run the helper:
+    ./install-launchd.sh
+
+  Change schedule:
+    Edit StartCalendarInterval below.
+    Weekday: 0=Sunday 1=Monday 2=Tuesday 3=Wednesday 4=Thursday 5=Friday 6=Saturday
+    Hour:    0-23 (0 = midnight)
+    Minute:  0-59
+
+  Uninstall:
+    launchctl unload ~/Library/LaunchAgents/com.oracle.workdocs-weeklysync.plist
+    rm ~/Library/LaunchAgents/com.oracle.workdocs-weeklysync.plist
+-->
+<plist version="1.0">
+<dict>
+
+  <!-- Unique label — must match the filename -->
+  <key>Label</key>
+  <string>com.oracle.workdocs-weeklysync</string>
+
+  <!-- Script to run — edit path if you move the scripts folder -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/PWSTEPHE/Claude/workdocs-lifecycle/05-weekly-sync-and-monitor.sh</string>
+    <string>--go</string>
+  </array>
+
+  <!-- Run every Sunday at midnight (00:00) -->
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Weekday</key>
+    <integer>0</integer>
+    <key>Hour</key>
+    <integer>0</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+
+  <!-- Stdout and stderr go to ~/Library/Logs for easy review -->
+  <key>StandardOutPath</key>
+  <string>/Users/PWSTEPHE/Library/Logs/workdocs-weekly-launchd.log</string>
+
+  <key>StandardErrorPath</key>
+  <string>/Users/PWSTEPHE/Library/Logs/workdocs-weekly-launchd-error.log</string>
+
+  <!-- Do NOT run immediately on launchctl load — wait for the schedule -->
+  <key>RunAtLoad</key>
+  <false/>
+
+  <!-- If the Mac was asleep at midnight, run as soon as it wakes -->
+  <key>StartInterval</key>
+  <integer>604800</integer>
+
+</dict>
+</plist>
